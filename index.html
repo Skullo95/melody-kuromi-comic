@@ -139,41 +139,8 @@ html, body {
   cursor: pointer;
 }
 
-.tap-hint {
-  position: absolute;
-  top: -40px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--cute-mint);
-  color: var(--cute-dark-purple);
-  padding: 0.5rem 1.5rem;
-  border-radius: 20px;
-  font-weight: 600;
-  font-size: 1rem;
-  border: 3px solid var(--cute-cream);
-  box-shadow: 0 4px 0 var(--cute-shadow);
-  animation: hintBounce 1.5s ease-in-out infinite;
-  white-space: nowrap;
-  z-index: 20;
-}
-.tap-hint::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  border-width: 10px 10px 0 0;
-  border-style: solid;
-  border-color: var(--cute-cream) transparent transparent transparent;
-}
-@keyframes hintBounce {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50% { transform: translateX(-50%) translateY(-10px); }
-}
-
 .book {
   position: relative;
-  /* Proporzioni aggiornate per accogliere un'immagine 3:4 (es. 864x1152) */
   width: min(70vw, 320px);
   height: min(93.3vw, 427px);
   transform-style: preserve-3d;
@@ -221,7 +188,6 @@ html, body {
   pointer-events: none;
 }
 
-/* Nuova classe per l'immagine di copertina */
 .cover-image {
   width: 100%;
   height: 100%;
@@ -262,25 +228,25 @@ html, body {
   align-items: center;
   padding: 0 1rem;
 }
+
+/* Nuovo bottone: Freccia corposa rosa */
 .back-btn {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.6rem 1.2rem;
-  background: var(--cute-mint);
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  background: var(--cute-pink);
   border: 3px solid var(--cute-cream);
-  border-radius: 50px;
-  color: var(--cute-dark-purple);
-  font-weight: 600;
-  font-family: 'Fredoka', sans-serif;
-  font-size: 1rem;
+  border-radius: 50%;
+  color: #fff;
   cursor: pointer;
-  box-shadow: 0 4px 0 #8fcfc0;
+  box-shadow: 0 4px 0 var(--cute-pink-deep);
   transition: all 0.1s ease;
 }
 .back-btn:active {
   transform: translateY(4px);
-  box-shadow: 0 0 0 #8fcfc0;
+  box-shadow: 0 0 0 var(--cute-pink-deep);
 }
 
 .progress-container {
@@ -480,12 +446,11 @@ html, body {
   </div>
   
   <div class="book-container" id="bookContainer">
-    <div class="tap-hint">Tocca per aprire! 🌸</div>
     <div class="book" id="book">
       <div class="book-interior" id="bookInterior"></div>
       <div class="book-cover" id="bookCover">
-          <!-- Qui viene caricata la tua immagine cover.jpg -->
-          <img src="images/cover.jpg" alt="Copertina del libro" class="cover-image">
+          <!-- Immagine di copertina in PNG -->
+          <img src="images/cover.png" alt="Copertina del libro" class="cover-image">
       </div>
     </div>
   </div>
@@ -494,9 +459,9 @@ html, body {
 <!-- Reader Screen -->
 <div class="reader-screen" id="readerScreen">
   <div class="reader-top">
-    <button class="back-btn" id="backBtn">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-      Copertina
+    <!-- Nuovo bottone con sola freccia corposa rosa -->
+    <button class="back-btn" id="backBtn" aria-label="Torna alla copertina">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
     </button>
   </div>
   <div class="progress-container">
@@ -563,6 +528,7 @@ function renderPage(index) {
 }
 
 function setupListeners() {
+  // Il libro si apre cliccando direttamente su di esso
   document.getElementById('bookContainer').addEventListener('click', openBook);
 
   document.getElementById('backBtn').addEventListener('click', () => {
@@ -595,7 +561,6 @@ function setupListeners() {
 
 function openBook() {
   document.getElementById('book').classList.add('opening');
-  document.querySelector('.tap-hint').style.opacity = '0';
   
   setTimeout(() => {
     document.getElementById('coverScreen').classList.add('hidden');
