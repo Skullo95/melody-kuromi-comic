@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>My Melody & Kuromi: Adventures</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --cute-bg: #fff0f6;
+  --cute-pink-light: #ffe2f0;
+  --cute-pink: #ffc2dd;
+  --cute-pink-deep: #ff9ecd;
+  --cute-fuchsia: #ff2d95; 
+  --cute-purple-light: #e6d6ff;
+  --cute-purple: #b692ff;
+  --cute-dark-purple: #3d1c54; 
+  --cute-cream: #fffdf8;
+  --cute-mint: #c8f4e8;
+  --cute-yellow: #fff3b0;
+  --cute-shadow: rgba(255, 158, 205, 0.4);
+}
+
+html, body {
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  font-family: 'Fredoka', sans-serif;
+  background: var(--cute-bg);
+  color: var(--cute-dark-purple);
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+  touch-action: manipulation;
+}
+
+/* ===== Atmosfiera Fiabesca ===== */
+.atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: 
+    radial-gradient(circle at 10% 20%, var(--cute-pink-light) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, var(--cute-purple-light) 0%, transparent 45%),
+    radial-gradient(circle at 50% 50%, var(--cute-cream) 0%, var(--cute-bg) 100%);
+}
+
+.atmosphere::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(var(--cute-pink) 2px, transparent 2px),
+    radial-gradient(var(--cute-purple) 2px, transparent 2px);
+  background-size: 60px 60px;
+  background-position: 0 0, 30px 30px;
+  opacity: 0.3;
+}
+
+#sparkles {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* ===== Cover Screen ===== */
+.cover-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  gap: 2rem;
+  transition: opacity 0.9s ease, visibility 0.9s ease;
+}
+.cover-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.cover-header {
+  text-align: center;
+  z-index: 2;
+  animation: bounceIn 1.5s ease;
+}
+.cover-title {
+  font-size: clamp(2rem, 8vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.2;
+  text-shadow: 3px 3px 0px var(--cute-cream), 6px 6px 0px var(--cute-pink);
+}
+.melody-text {
+  color: var(--cute-fuchsia);
+  font-family: 'Pacifico', cursive;
+  display: inline-block;
+  transform: rotate(-3deg);
+}
+.ampersand {
+  font-family: 'Pacifico', cursive;
+  color: var(--cute-purple);
+  font-size: 0.8em;
+  margin: 0 0.2em;
+}
+.kuromi-text {
+  color: var(--cute-dark-purple);
+  font-family: 'Pacifico', cursive;
+  display: inline-block;
+  transform: rotate(3deg);
+}
+.cover-subtitle {
+  font-family: 'Pacifico', cursive;
+  font-size: clamp(1.8rem, 6vw, 2.8rem);
+  color: var(--cute-pink-deep);
+  margin-top: 0.5rem;
+  text-shadow: 2px 2px 0px var(--cute-cream);
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0.5); opacity: 0; }
+  60% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+/* ===== Il Libro Interattivo ===== */
+.book-container {
+  perspective: 1800px;
+  perspective-origin: 50% 50%;
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+}
+
+.tap-hint {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--cute-mint);
+  color: var(--cute-dark-purple);
+  padding: 0.5rem 1.5rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 1rem;
+  border: 3px solid var(--cute-cream);
+  box-shadow: 0 4px 0 var(--cute-shadow);
+  animation: hintBounce 1.5s ease-in-out infinite;
+  white-space: nowrap;
+  z-index: 20;
+}
+.tap-hint::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 10px 10px 0 0;
+  border-style: solid;
+  border-color: var(--cute-cream) transparent transparent transparent;
+}
+@keyframes hintBounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-10px); }
+}
+
+.book {
+  position: relative;
+  /* Proporzioni aggiornate per accogliere un'immagine 3:4 (es. 864x1152) */
+  width: min(70vw, 320px);
+  height: min(93.3vw, 427px);
+  transform-style: preserve-3d;
+  transform: rotateY(-15deg) rotateX(5deg);
+  animation: bookFloat 6s ease-in-out infinite;
+  transition: transform 0.4s ease;
+}
+.book-container:active .book {
+  transform: rotateY(-10deg) rotateX(0deg) scale(0.95);
+}
+@keyframes bookFloat {
+  0%, 100% { transform: rotateY(-15deg) rotateX(5deg) translateY(0); }
+  50% { transform: rotateY(-10deg) rotateX(2deg) translateY(-15px); }
+}
+.book.opening { animation: none; }
+
+.book-cover {
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  transition: transform 1.4s cubic-bezier(0.65, 0, 0.35, 1);
+  z-index: 10;
+  background: var(--cute-cream);
+  border: 6px solid var(--cute-cream);
+  border-radius: 12px 20px 20px 12px;
+  box-shadow: 
+    0 20px 40px var(--cute-shadow), 
+    inset 0 0 20px rgba(255, 255, 255, 0.5);
+  overflow: hidden;
+  backface-visibility: hidden;
+}
+.book.opening .book-cover {
+  transform: rotateY(-170deg);
+}
+.book-cover::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 15px;
+  background: linear-gradient(90deg, rgba(0,0,0,0.2) 0%, transparent 100%);
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* Nuova classe per l'immagine di copertina */
+.cover-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.book-interior {
+  position: absolute;
+  inset: 0;
+  background: var(--cute-cream);
+  border: 6px solid var(--cute-pink-deep);
+  border-radius: 12px 20px 20px 12px;
+  overflow: hidden;
+}
+
+/* ===== Reader Screen ===== */
+.reader-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 0.5rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.8s ease 0.4s, visibility 0.8s ease 0.4s;
+}
+.reader-screen.active { opacity: 1; visibility: visible; }
+
+.reader-top {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+}
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.2rem;
+  background: var(--cute-mint);
+  border: 3px solid var(--cute-cream);
+  border-radius: 50px;
+  color: var(--cute-dark-purple);
+  font-weight: 600;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #8fcfc0;
+  transition: all 0.1s ease;
+}
+.back-btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 #8fcfc0;
+}
+
+.progress-container {
+  width: 90%;
+  max-width: 600px;
+  height: 12px;
+  background: var(--cute-cream);
+  border: 2px solid var(--cute-pink);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 0.5rem 0;
+  position: relative;
+}
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--cute-fuchsia), var(--cute-pink-deep));
+  border-radius: 10px;
+  transition: width 0.5s ease;
+}
+
+/* ===== Book Reader ===== */
+.book-reader {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  perspective: 1500px;
+  min-height: 0;
+  padding: 0 1rem;
+}
+
+.book-spread {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  aspect-ratio: 4 / 5;
+  max-height: 100%;
+  transform-style: preserve-3d;
+}
+
+.book-pages {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  background: var(--cute-cream);
+  border: 6px solid var(--cute-pink-deep);
+  border-radius: 12px 20px 20px 12px;
+  overflow: hidden;
+  box-shadow: 0 15px 30px var(--cute-shadow);
+}
+.book-pages::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 12px;
+  background: linear-gradient(90deg, rgba(0,0,0,0.1) 0%, transparent 100%);
+  z-index: 30;
+  pointer-events: none;
+}
+
+.page {
+  position: absolute;
+  inset: 0;
+  background: var(--cute-cream);
+  overflow: hidden;
+}
+.page-content {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+.page-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.img-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cute-pink-light);
+  color: var(--cute-purple);
+  font-family: 'Pacifico', cursive;
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+}
+
+.page-number {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--cute-dark-purple);
+  background: var(--cute-yellow);
+  padding: 0.3rem 1rem;
+  border-radius: 20px;
+  z-index: 6;
+  border: 3px solid var(--cute-cream);
+  box-shadow: 0 3px 0 var(--cute-pink-deep);
+}
+
+/* ===== Flip Page ===== */
+.flip-page {
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  pointer-events: none;
+  z-index: 50;
+  border-radius: 12px 20px 20px 12px;
+  overflow: hidden;
+  box-shadow: 0 15px 30px var(--cute-shadow);
+  will-change: transform;
+}
+.flip-face {
+  position: absolute;
+  inset: 0;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  overflow: hidden;
+  background: var(--cute-cream);
+}
+.flip-face.front { transform: rotateY(0deg); }
+.flip-face.back { transform: rotateY(180deg); }
+.flip-face img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ===== Navigation ===== */
+.nav-controls {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.5rem;
+  z-index: 10;
+}
+.nav-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--cute-pink-light);
+  border: 4px solid var(--cute-cream);
+  color: var(--cute-fuchsia);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 5px 0 var(--cute-pink-deep);
+  transition: all 0.1s ease;
+}
+.nav-btn:active:not(:disabled) {
+  transform: translateY(5px);
+  box-shadow: 0 0 0 var(--cute-pink-deep);
+}
+.nav-btn:disabled { 
+  opacity: 0.4; 
+  background: #eee;
+  box-shadow: 0 5px 0 #ccc;
+  color: #999;
+}
+.page-indicator {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: var(--cute-dark-purple);
+  min-width: 80px;
+  text-align: center;
+}
+.page-indicator .current {
+  color: var(--cute-fuchsia);
+  font-size: 1.5rem;
+}
+</style>
+</head>
+<body>
+
+<div class="atmosphere"></div>
+<canvas id="sparkles"></canvas>
+
+<!-- Cover Screen -->
+<div class="cover-screen" id="coverScreen">
+  <div class="cover-header">
+    <h1 class="cover-title">
+      <span class="melody-text">My Melody</span>
+      <span class="ampersand">&</span>
+      <span class="kuromi-text">Kuromi</span>
+    </h1>
+    <p class="cover-subtitle">Adventures</p>
+  </div>
+  
+  <div class="book-container" id="bookContainer">
+    <div class="tap-hint">Tocca per aprire! 🌸</div>
+    <div class="book" id="book">
+      <div class="book-interior" id="bookInterior"></div>
+      <div class="book-cover" id="bookCover">
+          <!-- Qui viene caricata la tua immagine cover.jpg -->
+          <img src="images/cover.jpg" alt="Copertina del libro" class="cover-image">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Reader Screen -->
+<div class="reader-screen" id="readerScreen">
+  <div class="reader-top">
+    <button class="back-btn" id="backBtn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Copertina
+    </button>
+  </div>
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar" style="width: 4%"></div>
+  </div>
+  <div class="book-reader">
+    <div class="book-spread">
+      <div class="book-pages" id="bookPages">
+        <div class="page" id="currentPage">
+          <div class="page-content" id="pageContent"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="nav-controls">
+    <button class="nav-btn" id="prevBtn" disabled>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <div class="page-indicator"><span class="current" id="pageCurrent">1</span> / 25</div>
+    <button class="nav-btn" id="nextBtn">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+const PAGE_COUNT = 25;
+
+// Genera l'HTML per un'immagine di pagina
+function getPageImageHTML(index) {
+  const pageNum = index + 1;
+  return `
+    <img src="images/page-${pageNum}.png" alt="Page ${pageNum}" class="page-image" 
+         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+    <div class="img-placeholder" style="display:none;">
+      <div>
+        <h3 style="font-size: 2rem; margin-bottom: 1rem;">🎀 Pagina ${pageNum} 🎀</h3>
+        <p>Inserisci qui l'immagine:<br><strong>images/page-${pageNum}.png</strong></p>
+      </div>
+    </div>
+  `;
+}
+
+let currentPage = 0;
+let isFlipping = false;
+
+function init() {
+  renderPage(0);
+  setupListeners();
+  initSparkles();
+}
+
+function renderPage(index) {
+  const content = document.getElementById('pageContent');
+  content.innerHTML = `
+    ${getPageImageHTML(index)}
+    <div class="page-number">${index + 1} / ${PAGE_COUNT}</div>
+  `;
+  
+  document.getElementById('pageCurrent').textContent = index + 1;
+  document.getElementById('progressBar').style.width = `${((index + 1) / PAGE_COUNT) * 100}%`;
+  document.getElementById('prevBtn').disabled = index === 0;
+  document.getElementById('nextBtn').disabled = index === PAGE_COUNT - 1;
+}
+
+function setupListeners() {
+  document.getElementById('bookContainer').addEventListener('click', openBook);
+
+  document.getElementById('backBtn').addEventListener('click', () => {
+    document.getElementById('readerScreen').classList.remove('active');
+    setTimeout(() => {
+      document.getElementById('coverScreen').classList.remove('hidden');
+      document.getElementById('book').classList.remove('opening');
+    }, 600);
+  });
+
+  document.getElementById('prevBtn').addEventListener('click', () => changePage(-1));
+  document.getElementById('nextBtn').addEventListener('click', () => changePage(1));
+  
+  document.addEventListener('keydown', (e) => {
+    if (!document.getElementById('readerScreen').classList.contains('active')) return;
+    if (e.key === 'ArrowLeft') changePage(-1);
+    if (e.key === 'ArrowRight') changePage(1);
+  });
+  
+  let touchStartX = 0;
+  const reader = document.getElementById('readerScreen');
+  reader.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+  reader.addEventListener('touchend', (e) => {
+    const diff = touchStartX - e.changedTouches[0].screenX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) changePage(1); else changePage(-1);
+    }
+  }, { passive: true });
+}
+
+function openBook() {
+  document.getElementById('book').classList.add('opening');
+  document.querySelector('.tap-hint').style.opacity = '0';
+  
+  setTimeout(() => {
+    document.getElementById('coverScreen').classList.add('hidden');
+    document.getElementById('readerScreen').classList.add('active');
+  }, 1000);
+}
+
+function changePage(direction) {
+  if (isFlipping) return;
+  const newIndex = currentPage + direction;
+  if (newIndex < 0 || newIndex >= PAGE_COUNT) return;
+  
+  isFlipping = true;
+  const pages = document.getElementById('bookPages');
+  
+  const flipPage = document.createElement('div');
+  flipPage.className = 'flip-page';
+  
+  const frontFace = document.createElement('div');
+  frontFace.className = 'flip-face front';
+  frontFace.innerHTML = getPageImageHTML(currentPage);
+  
+  const backFace = document.createElement('div');
+  backFace.className = 'flip-face back';
+  backFace.innerHTML = getPageImageHTML(newIndex);
+  
+  flipPage.appendChild(frontFace);
+  flipPage.appendChild(backFace);
+  pages.appendChild(flipPage);
+  
+  flipPage.offsetHeight;
+  
+  const rotation = direction > 0 ? -180 : 180;
+  if (direction < 0) {
+    flipPage.style.transform = 'rotateY(-180deg)';
+    flipPage.offsetHeight;
+  }
+  
+  requestAnimationFrame(() => {
+    flipPage.style.transition = 'transform 0.7s cubic-bezier(0.65, 0, 0.35, 1)';
+    flipPage.style.transform = `rotateY(${rotation}deg)`;
+  });
+  
+  setTimeout(() => {
+    currentPage = newIndex;
+    renderPage(currentPage);
+  }, 350);
+  
+  setTimeout(() => {
+    flipPage.remove();
+    isFlipping = false;
+  }, 800);
+}
+
+function initSparkles() {
+  const canvas = document.getElementById('sparkles');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  let w, h;
+  const colors = ['#ff9ecd', '#ff2d95', '#b692ff', '#fff3b0', '#c8f4e8'];
+  
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+    const count = window.innerWidth < 768 ? 30 : 60;
+    particles = [];
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        size: Math.random() * 3 + 1,
+        speedY: -Math.random() * 0.5 - 0.2,
+        speedX: (Math.random() - 0.5) * 0.5,
+        opacity: Math.random() * 0.8 + 0.2,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        type: Math.random() > 0.5 ? 'star' : 'circle',
+        twinkle: Math.random() * 0.02
+      });
+    }
+  }
+  
+  function drawStar(cx, cy, spikes, outerRadius, innerRadius, color) {
+    let rot = Math.PI / 2 * 3;
+    let x = cx;
+    let y = cy;
+    let step = Math.PI / spikes;
+
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - outerRadius);
+    for (let i = 0; i < spikes; i++) {
+      x = cx + Math.cos(rot) * outerRadius;
+      y = cy + Math.sin(rot) * outerRadius;
+      ctx.lineTo(x, y);
+      rot += step;
+      x = cx + Math.cos(rot) * innerRadius;
+      y = cy + Math.sin(rot) * innerRadius;
+      ctx.lineTo(x, y);
+      rot += step;
+    }
+    ctx.lineTo(cx, cy - outerRadius);
+    ctx.closePath();
+    ctx.fillStyle = color;
+  }
+  
+  function animate() {
+    ctx.clearRect(0, 0, w, h);
+    particles.forEach(p => {
+      p.x += p.speedX;
+      p.y += p.speedY;
+      p.opacity += p.twinkle;
+      if (p.opacity > 1 || p.opacity < 0.2) p.twinkle *= -1;
+      
+      if (p.y < -10) { p.y = h + 10; p.x = Math.random() * w; }
+      if (p.x < -10) p.x = w + 10;
+      if (p.x > w + 10) p.x = -10;
+      
+      ctx.globalAlpha = p.opacity;
+      ctx.fillStyle = p.color;
+      
+      if (p.type === 'star') {
+        drawStar(p.x, p.y, 4, p.size * 2, p.size * 0.8, p.color);
+        ctx.fill();
+      } else {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(animate);
+  }
+  
+  window.addEventListener('resize', resize);
+  resize();
+  animate();
+}
+
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
