@@ -6,7 +6,6 @@
 <title>My Melody & Kuromi: Adventures</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- Font molto infantili e in stile Sanrio -->
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Bubblegum+Sans&display=swap" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -31,7 +30,7 @@ html, body {
   height: 100vh;
   height: 100dvh;
   overflow: hidden;
-  font-family: 'Baloo 2', cursive; /* Font infantile e rotondo */
+  font-family: 'Baloo 2', cursive;
   background: var(--cute-bg);
   color: var(--cute-dark-purple);
   user-select: none;
@@ -95,7 +94,7 @@ html, body {
 }
 .cover-title {
   font-size: clamp(2.2rem, 9vw, 4rem);
-  font-family: 'Bubblegum Sans', cursive; /* Font super infantile */
+  font-family: 'Bubblegum Sans', cursive;
   font-weight: 400;
   line-height: 1.2;
   text-shadow: 3px 3px 0px var(--cute-cream), 6px 6px 0px var(--cute-pink);
@@ -296,7 +295,6 @@ html, body {
   box-shadow: 0 15px 30px var(--cute-shadow);
 }
 
-/* Effetto magico rosa quando si sfoglia */
 .book-pages.magic-flip::after {
   content: '';
   position: absolute;
@@ -441,7 +439,6 @@ html, body {
   font-size: 1.8rem;
 }
 
-/* Particelle magiche rosa che esplodono */
 .magic-particle {
   position: fixed;
   z-index: 100;
@@ -462,6 +459,9 @@ html, body {
 
 <div class="atmosphere"></div>
 <canvas id="sparkles"></canvas>
+
+<!-- File Audio per lo sfogliamento -->
+<audio id="pageFlipSound" src="audio/page-flip.mp3" preload="auto"></audio>
 
 <!-- Cover Screen -->
 <div class="cover-screen" id="coverScreen">
@@ -515,7 +515,10 @@ html, body {
 </div>
 
 <script>
-const PAGE_COUNT = 28; // Aggiornato a 28 pagine
+const PAGE_COUNT = 28;
+
+// Elemento Audio
+const flipSound = document.getElementById('pageFlipSound');
 
 function getPageImageHTML(index) {
   const pageNum = index + 1;
@@ -553,7 +556,14 @@ function renderPage(index) {
   document.getElementById('nextBtn').disabled = index === PAGE_COUNT - 1;
 }
 
-// Effetto magico rosa che esplode dal libro
+// Funzione per riprodurre il suono
+function playFlipSound() {
+  if (flipSound) {
+    flipSound.currentTime = 0; // Riavvolge l'audio per permettere click ravvicinati
+    flipSound.play().catch(e => console.log("Audio bloccato dal browser:", e));
+  }
+}
+
 function triggerMagicBurst() {
   const bookRect = document.getElementById('bookPages').getBoundingClientRect();
   const x = bookRect.left + (bookRect.width / 2);
@@ -615,7 +625,7 @@ function openBook() {
   setTimeout(() => {
     document.getElementById('coverScreen').classList.add('hidden');
     document.getElementById('readerScreen').classList.add('active');
-    triggerMagicBurst(); // Effetto magico iniziale
+    triggerMagicBurst();
   }, 1000);
 }
 
@@ -627,11 +637,12 @@ function changePage(direction) {
   isFlipping = true;
   const pages = document.getElementById('bookPages');
   
-  // Attiva il flash magico rosa sul libro
+  // Riproduce il suono dello sfogliamento
+  playFlipSound();
+  
   pages.classList.add('magic-flip');
   setTimeout(() => pages.classList.remove('magic-flip'), 800);
   
-  // Crea le stelline magiche
   triggerMagicBurst();
   
   const flipPage = document.createElement('div');
@@ -736,7 +747,8 @@ function initSparkles() {
       if (p.x > w + 10) p.x = -10;
       
       ctx.globalAlpha = p.opacity;
-  
+      ctx.fillStyle = p.color;
+      
       if (p.type === 'star') {
         drawStar(p.x, p.y, 4, p.size * 2, p.size * 0.8, p.color);
         ctx.fill();
