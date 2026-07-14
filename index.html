@@ -6,7 +6,8 @@
 <title>My Melody & Kuromi: Adventures</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
+<!-- Font molto infantili e in stile Sanrio -->
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Bubblegum+Sans&display=swap" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
@@ -30,7 +31,7 @@ html, body {
   height: 100vh;
   height: 100dvh;
   overflow: hidden;
-  font-family: 'Fredoka', sans-serif;
+  font-family: 'Baloo 2', cursive; /* Font infantile e rotondo */
   background: var(--cute-bg);
   color: var(--cute-dark-purple);
   user-select: none;
@@ -93,32 +94,30 @@ html, body {
   animation: bounceIn 1.5s ease;
 }
 .cover-title {
-  font-size: clamp(2rem, 8vw, 3.5rem);
-  font-weight: 700;
+  font-size: clamp(2.2rem, 9vw, 4rem);
+  font-family: 'Bubblegum Sans', cursive; /* Font super infantile */
+  font-weight: 400;
   line-height: 1.2;
   text-shadow: 3px 3px 0px var(--cute-cream), 6px 6px 0px var(--cute-pink);
 }
 .melody-text {
   color: var(--cute-fuchsia);
-  font-family: 'Pacifico', cursive;
   display: inline-block;
   transform: rotate(-3deg);
 }
 .ampersand {
-  font-family: 'Pacifico', cursive;
   color: var(--cute-purple);
   font-size: 0.8em;
   margin: 0 0.2em;
 }
 .kuromi-text {
   color: var(--cute-dark-purple);
-  font-family: 'Pacifico', cursive;
   display: inline-block;
   transform: rotate(3deg);
 }
 .cover-subtitle {
-  font-family: 'Pacifico', cursive;
-  font-size: clamp(1.8rem, 6vw, 2.8rem);
+  font-family: 'Bubblegum Sans', cursive;
+  font-size: clamp(2rem, 7vw, 3rem);
   color: var(--cute-pink-deep);
   margin-top: 0.5rem;
   text-shadow: 2px 2px 0px var(--cute-cream);
@@ -167,9 +166,7 @@ html, body {
   background: var(--cute-cream);
   border: 6px solid var(--cute-cream);
   border-radius: 12px 20px 20px 12px;
-  box-shadow: 
-    0 20px 40px var(--cute-shadow), 
-    inset 0 0 20px rgba(255, 255, 255, 0.5);
+  box-shadow: 0 20px 40px var(--cute-shadow), inset 0 0 20px rgba(255, 255, 255, 0.5);
   overflow: hidden;
   backface-visibility: hidden;
 }
@@ -229,7 +226,6 @@ html, body {
   padding: 0 1rem;
 }
 
-/* Nuovo bottone: Freccia corposa rosa */
 .back-btn {
   display: flex;
   align-items: center;
@@ -299,6 +295,24 @@ html, body {
   overflow: hidden;
   box-shadow: 0 15px 30px var(--cute-shadow);
 }
+
+/* Effetto magico rosa quando si sfoglia */
+.book-pages.magic-flip::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(255, 46, 149, 0.5) 0%, transparent 70%);
+  z-index: 40;
+  pointer-events: none;
+  animation: magicFlash 0.8s ease-out forwards;
+  mix-blend-mode: screen;
+}
+@keyframes magicFlash {
+  0% { opacity: 0; transform: scale(0.5); }
+  40% { opacity: 1; transform: scale(1.1); }
+  100% { opacity: 0; transform: scale(1.5); }
+}
+
 .book-pages::before {
   content: '';
   position: absolute;
@@ -336,19 +350,19 @@ html, body {
   justify-content: center;
   background: var(--cute-pink-light);
   color: var(--cute-purple);
-  font-family: 'Pacifico', cursive;
+  font-family: 'Bubblegum Sans', cursive;
   text-align: center;
   padding: 2rem;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
 }
 
 .page-number {
   position: absolute;
   top: 0.8rem;
   right: 0.8rem;
-  font-family: 'Fredoka', sans-serif;
-  font-weight: 600;
-  font-size: 1rem;
+  font-family: 'Baloo 2', cursive;
+  font-weight: 800;
+  font-size: 1.1rem;
   color: var(--cute-dark-purple);
   background: var(--cute-yellow);
   padding: 0.3rem 1rem;
@@ -416,16 +430,31 @@ html, body {
   color: #999;
 }
 .page-indicator {
-  font-family: 'Fredoka', sans-serif;
-  font-weight: 600;
-  font-size: 1.2rem;
+  font-family: 'Bubblegum Sans', cursive;
+  font-size: 1.4rem;
   color: var(--cute-dark-purple);
   min-width: 80px;
   text-align: center;
 }
 .page-indicator .current {
   color: var(--cute-fuchsia);
-  font-size: 1.5rem;
+  font-size: 1.8rem;
+}
+
+/* Particelle magiche rosa che esplodono */
+.magic-particle {
+  position: fixed;
+  z-index: 100;
+  pointer-events: none;
+  width: 12px;
+  height: 12px;
+  background-color: var(--cute-fuchsia);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  animation: magicMove 0.8s ease-out forwards;
+}
+@keyframes magicMove {
+  0% { transform: translate(0,0) scale(1) rotate(0deg); opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(0) rotate(180deg); opacity: 0; }
 }
 </style>
 </head>
@@ -449,7 +478,6 @@ html, body {
     <div class="book" id="book">
       <div class="book-interior" id="bookInterior"></div>
       <div class="book-cover" id="bookCover">
-          <!-- Immagine di copertina in PNG -->
           <img src="images/cover.png" alt="Copertina del libro" class="cover-image">
       </div>
     </div>
@@ -459,13 +487,12 @@ html, body {
 <!-- Reader Screen -->
 <div class="reader-screen" id="readerScreen">
   <div class="reader-top">
-    <!-- Nuovo bottone con sola freccia corposa rosa -->
     <button class="back-btn" id="backBtn" aria-label="Torna alla copertina">
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
     </button>
   </div>
   <div class="progress-container">
-    <div class="progress-bar" id="progressBar" style="width: 4%"></div>
+    <div class="progress-bar" id="progressBar" style="width: 3.5%"></div>
   </div>
   <div class="book-reader">
     <div class="book-spread">
@@ -480,7 +507,7 @@ html, body {
     <button class="nav-btn" id="prevBtn" disabled>
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
     </button>
-    <div class="page-indicator"><span class="current" id="pageCurrent">1</span> / 25</div>
+    <div class="page-indicator"><span class="current" id="pageCurrent">1</span> / 28</div>
     <button class="nav-btn" id="nextBtn">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
     </button>
@@ -488,9 +515,8 @@ html, body {
 </div>
 
 <script>
-const PAGE_COUNT = 25;
+const PAGE_COUNT = 28; // Aggiornato a 28 pagine
 
-// Genera l'HTML per un'immagine di pagina
 function getPageImageHTML(index) {
   const pageNum = index + 1;
   return `
@@ -527,8 +553,32 @@ function renderPage(index) {
   document.getElementById('nextBtn').disabled = index === PAGE_COUNT - 1;
 }
 
+// Effetto magico rosa che esplode dal libro
+function triggerMagicBurst() {
+  const bookRect = document.getElementById('bookPages').getBoundingClientRect();
+  const x = bookRect.left + (bookRect.width / 2);
+  const y = bookRect.top + (bookRect.height / 2);
+  
+  const colors = ['#ff2d95', '#ff9ecd', '#ffc2dd', '#b692ff'];
+  
+  for (let i = 0; i < 20; i++) {
+    const star = document.createElement('div');
+    star.className = 'magic-particle';
+    star.style.left = x + 'px';
+    star.style.top = y + 'px';
+    star.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    
+    const angle = Math.random() * Math.PI * 2;
+    const distance = 80 + Math.random() * 120;
+    star.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
+    star.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
+    
+    document.body.appendChild(star);
+    setTimeout(() => star.remove(), 800);
+  }
+}
+
 function setupListeners() {
-  // Il libro si apre cliccando direttamente su di esso
   document.getElementById('bookContainer').addEventListener('click', openBook);
 
   document.getElementById('backBtn').addEventListener('click', () => {
@@ -565,6 +615,7 @@ function openBook() {
   setTimeout(() => {
     document.getElementById('coverScreen').classList.add('hidden');
     document.getElementById('readerScreen').classList.add('active');
+    triggerMagicBurst(); // Effetto magico iniziale
   }, 1000);
 }
 
@@ -575,6 +626,13 @@ function changePage(direction) {
   
   isFlipping = true;
   const pages = document.getElementById('bookPages');
+  
+  // Attiva il flash magico rosa sul libro
+  pages.classList.add('magic-flip');
+  setTimeout(() => pages.classList.remove('magic-flip'), 800);
+  
+  // Crea le stelline magiche
+  triggerMagicBurst();
   
   const flipPage = document.createElement('div');
   flipPage.className = 'flip-page';
@@ -678,8 +736,7 @@ function initSparkles() {
       if (p.x > w + 10) p.x = -10;
       
       ctx.globalAlpha = p.opacity;
-      ctx.fillStyle = p.color;
-      
+  
       if (p.type === 'star') {
         drawStar(p.x, p.y, 4, p.size * 2, p.size * 0.8, p.color);
         ctx.fill();
